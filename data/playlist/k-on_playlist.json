@@ -1,5 +1,7 @@
 {
 	"name": "Playlist K-On!",
+	"anime": "K-on!",
+	"malIds": [5680],
 	"songs": [
 		{
 			"title": "Honey Sweet Tea Time - Tsumugi Kotobuki (Minako Kotobuki)",
