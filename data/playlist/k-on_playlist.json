@@ -1,44 +1,43 @@
 {
 	"name": "Playlist K-On!",
-	"tags": ["k-on", "htt", "houkago tea time", "ho-kago tea time"],
 	"songs": [
 		{
-			"title": "Honey Sweet Tea Time - Tsumugi Kotobuki ",
+			"title": "Honey Sweet Tea Time - Tsumugi Kotobuki (Minako Kotobuki)",
 			"provider": "YOUTUBE",
 			"value": "tpDMYQCdiYA"
 		},
 		{
-			"title": "Azusa&Yui Fude pen Boru pen",
+			"title": "K on Azusa&Yui Fude pen Boru pen",
 			"provider": "YOUTUBE",
 			"value": "PCmZ45INWYA"
 		},
 		{
-			"title": "U&I - Hōkago Tea Time",
+			"title": "K-On! | U&I - Hōkago Tea Time",
 			"provider": "YOUTUBE",
 			"value": "49WKHkLsR_U"
 		},
 		{
-			"title": "Fuwa Fuwa Time",
+			"title": "K-On | Fuwa Fuwa Time",
 			"provider": "YOUTUBE",
 			"value": "I0xRbWqIohQ"
 		},
 		{
-			"title": "Don't say lazy",
+			"title": "K-On | Don't say lazy",
 			"provider": "YOUTUBE",
 			"value": "Wz-pNcgYo0c"
 		},
 		{
-			"title": "Tenshi ni Fureta yo!",
+			"title": "K-On | Tenshi ni Fureta yo!",
 			"provider": "YOUTUBE",
 			"value": "y9NS5IHLunw"
 		},
 		{
-			"title": "Watashi no Koi wa Hotchkiss",
+			"title": "K-On | Watashi no Koi wa Hotchkiss",
 			"provider": "YOUTUBE",
 			"value": "4KziY05zHeQ"
 		},
 		{
-			"title": "Listen!",
+			"title": "K-On | Listen!",
 			"provider": "YOUTUBE",
 			"value": "zK3YHKYM6PQ"
 		}
