@@ -6,17 +6,6 @@
 
 ![Moesic Logo](.github/img/preview.png)
 
-## Installation
-
-```bash
-npm install -g moesic
-```
-
-## Usage
-
-```bash
-moesic
-```
 
 ### TODO
 
