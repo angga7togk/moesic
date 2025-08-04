@@ -33,3 +33,6 @@
 ### Tsubasa Wo Kudasai
 
 - [Tsubasa Wo Kudasai](https://ia804608.us.archive.org/22/items/tsubasa-wo-kudasai-p86gmg/Astrophysics%20-%20Tsubasa%20Wo%20Kudasai.mp3)
+
+### Love Live (µ's)
+- [Snow Halation | µ's](https://dn721605.ca.archive.org/0/items/youtube-pPYkWgQgE8o/pPYkWgQgE8o.mp4)
