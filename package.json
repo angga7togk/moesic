@@ -1,0 +1,20 @@
+{
+  "name": "moesic",
+  "version": "1.0.0",
+  "description": "Moesic is a freely accessible and open collection of Japanese music and anime. The project is open source, with the goal of providing a simple, aesthetically pleasing music listening experience focused on Japanese and anime content.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angga7togk/moesic.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/angga7togk/moesic/issues"
+  },
+  "homepage": "https://github.com/angga7togk/moesic#readme"
+}
