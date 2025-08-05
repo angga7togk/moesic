@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
 	"time"
 
@@ -11,6 +12,7 @@ import (
 )
 
 type model struct {
+	player *exec.Cmd
 	songName  string
 	duration  float64
 	startTime time.Time
@@ -25,8 +27,9 @@ func drawCustomProgressBar(percent float64, width int) string {
 	return fmt.Sprintf("[%s%s]", strings.Repeat("█", filled), strings.Repeat("░", empty))
 }
 
-func initialModel(songName string, duration float64) model {
+func initialModel(player *exec.Cmd, songName string, duration float64) model {
 	return model{
+		player: player,
 		songName:  songName,
 		duration:  duration,
 		startTime: time.Now(),
@@ -59,6 +62,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		if msg.String() == "q" {
 			m.quitting = true
+			m.player.Cancel()
 			return m, tea.Quit
 		}
 	}
@@ -91,7 +95,7 @@ func (m model) View() string {
 }
 
 func main() {
-	song := GetRandomSong(FlatSongs(getMoesic())) // kamu punya ini sendiri ya
+	song := GetRandomSong(FlatSongs(getMoesic()))
 	duration, err := getDuration(song.Url)
 	if err != nil {
 		fmt.Println("Error:", err)
@@ -100,7 +104,7 @@ func main() {
 
 	cmd := play(song.Url)
 
-	p := tea.NewProgram(initialModel(song.Name, duration))
+	p := tea.NewProgram(initialModel(cmd, song.Name, duration))
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Alas, there's been an error: %v", err)
 		os.Exit(1)
