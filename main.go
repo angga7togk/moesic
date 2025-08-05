@@ -2,114 +2,111 @@ package main
 
 import (
 	"fmt"
+	"moesic/data"
 	"os"
-	"os/exec"
-	"strings"
-	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
 
-type model struct {
-	player *exec.Cmd
-	songName  string
-	duration  float64
-	startTime time.Time
-	quitting  bool
+func printHelp() {
+	titleStyle := lipgloss.NewStyle().
+		Bold(true).
+		Foreground(lipgloss.Color("#FF5F87")).
+		PaddingBottom(1)
+
+	sectionStyle := lipgloss.NewStyle().
+		Bold(true).
+		Underline(true).
+		Foreground(lipgloss.Color("#00D787"))
+
+	optionNameStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#5FD7FF"))
+
+	descriptionStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#AFAFAF"))
+
+	// Output
+	fmt.Println(titleStyle.Render(` 
+ __  __  ___  ___ ___ ___ ___ 
+|  \/  |/ _ \| __/ __|_ _/ __|
+| |\/| | (_) | _|\__ \| | (__ 
+|_|  |_|\___/|___|___/___\___|
+                               `))
+	fmt.Println("⭐️ Star to support our work!")
+	fmt.Print(lipgloss.NewStyle().Inline(true).Foreground(lipgloss.Color("#4157ba")).Render("   https://github.com/angga7togk/moesic"))
+	fmt.Println()
+	fmt.Println()
+	fmt.Println(sectionStyle.Render("Usage:"))
+	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-20s", "moesic")) + descriptionStyle.Render("Play random flat moesic"))
+
+	fmt.Println()
+	fmt.Println(sectionStyle.Render("Options:"))
+	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-20s", "--playlist, -pl")) + descriptionStyle.Render("Play random playlist"))
+	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-20s", "--single, -s")) + descriptionStyle.Render("Play random single moesic"))
+	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-20s", "--help, -h")) + descriptionStyle.Render("Command help"))
+	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-20s", "--info, -i")) + descriptionStyle.Render("Moesic info"))
+	fmt.Print("\n\n")
 }
 
-type tickMsg time.Time
-
-func drawCustomProgressBar(percent float64, width int) string {
-	filled := int(percent * float64(width))
-	empty := width - filled
-	return fmt.Sprintf("[%s%s]", strings.Repeat("█", filled), strings.Repeat("░", empty))
-}
-
-func initialModel(player *exec.Cmd, songName string, duration float64) model {
-	return model{
-		player: player,
-		songName:  songName,
-		duration:  duration,
-		startTime: time.Now(),
-	}
-}
-
-func (m model) Init() tea.Cmd {
-	return tick()
-}
-
-func tick() tea.Cmd {
-	return tea.Tick(time.Millisecond*200, func(t time.Time) tea.Msg {
-		return tickMsg(t)
-	})
-}
-
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case tickMsg:
-		if m.quitting {
-			return m, tea.Quit
-		}
-		elapsed := time.Since(m.startTime).Seconds()
-		if elapsed >= m.duration {
-			m.quitting = true
-			return m, tea.Quit
-		}
-		return m, tick()
-
-	case tea.KeyMsg:
-		if msg.String() == "q" {
-			m.quitting = true
-			m.player.Cancel()
-			return m, tea.Quit
-		}
-	}
-	return m, nil
-}
-
-func (m model) View() string {
-	elapsed := time.Since(m.startTime).Seconds()
-	percent := elapsed / m.duration
-	if percent > 1 {
-		percent = 1
-	}
-
-	progressBar := drawCustomProgressBar(percent, 20)
-
-	info := fmt.Sprintf("%s\n\n%s %s / %s\n\n[S]kip  [P]ause  S[o]urce  [Q]uite",
-		m.songName,
-		progressBar,
-		formatTime(elapsed),
-		formatTime(m.duration),
-	)
-
-	boxStyle := lipgloss.NewStyle().
-		Width(50).
-		Padding(1).
-		BorderStyle(lipgloss.NormalBorder()).
-		BorderForeground(lipgloss.Color("63"))
-
-	return boxStyle.Render(info)
-}
+var (
+	playlists   []data.Playlist = []data.Playlist{}
+	flatSongs   []data.Moesic   = []data.Moesic{}
+	currentTime float64         = 0
+)
 
 func main() {
-	song := GetRandomSong(FlatSongs(getMoesic()))
-	duration, err := getDuration(song.Url)
-	if err != nil {
-		fmt.Println("Error:", err)
+	playlists = data.GetMoesic()
+	flatSongs = data.FlatSongs(playlists)
+
+	args := os.Args
+
+	if len(args) < 2 {
+		random := data.GetRandomSong(flatSongs);
+		ytb, err := GetYoutube(random.Url)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+
+
+		cmd := play(ytb.Url)
+
+		p := tea.NewProgram(initialModel(cmd,random, ytb.Duration))
+		if _, err := p.Run(); err != nil {
+			fmt.Printf("Alas, there's been an error: %v", err)
+			os.Exit(1)
+		}
+
+		cmd.Wait()
+		// song := data.GetRandomSong(flatSongs)
+		// duration, err := getDuration(song.Url)
+		// if err != nil {
+		// 	fmt.Println("Error:", err)
+		// 	return
+		// }
+
+		// cmd := play(song.Url)
+
+		// p := tea.NewProgram(initialModel(cmd, song.Name, duration))
+		// if _, err := p.Run(); err != nil {
+		// 	fmt.Printf("Alas, there's been an error: %v", err)
+		// 	os.Exit(1)
+		// }
+
+		// cmd.Wait()
 		return
 	}
 
-	cmd := play(song.Url)
-
-	p := tea.NewProgram(initialModel(cmd, song.Name, duration))
-	if _, err := p.Run(); err != nil {
-		fmt.Printf("Alas, there's been an error: %v", err)
-		os.Exit(1)
+	command := args[1]
+	switch command {
+	case "--playlist-random":
+		fmt.Println("Playing music...")
+	case "--pause":
+		fmt.Println("Pausing music...")
+	case "--stop":
+		fmt.Println("Stopping music...")
+	default:
+		printHelp()
 	}
-
-	cmd.Wait()
-	fmt.Println("\nDone.")
 }
