@@ -35,11 +35,11 @@ func GetYoutube(videoURL string) (*Youtube, error) {
 		Duration float64 `json:"duration"`
 		URL      string  `json:"url"`
 		Formats  []struct {
-			Ext      string  `json:"ext"`
-			ACodec   string  `json:"acodec"`
-			VCodec   string  `json:"vcodec"`
-			FormatID string  `json:"format_id"`
-			URL      string  `json:"url"`
+			Ext      string `json:"ext"`
+			ACodec   string `json:"acodec"`
+			VCodec   string `json:"vcodec"`
+			FormatID string `json:"format_id"`
+			URL      string `json:"url"`
 		} `json:"formats"`
 	}
 	err = json.Unmarshal(output, &data)
@@ -49,8 +49,14 @@ func GetYoutube(videoURL string) (*Youtube, error) {
 
 	for _, format := range data.Formats {
 		if format.Ext == "m4a" && format.VCodec == "none" {
+
+			// kurangin 0.5 biar pas progress nya ke 100% dan menghindari macet saat next music
+			dur := data.Duration
+			if dur > 0.5 {
+				dur -= 0.5
+			}
 			return &Youtube{
-				Duration: data.Duration,
+				Duration: dur,
 				Url:      format.URL,
 			}, nil
 		}
