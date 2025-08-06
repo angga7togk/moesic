@@ -50,9 +50,9 @@ func printHelp() {
 }
 
 var (
-	playlists   []data.Playlist = []data.Playlist{}
-	flatSongs   []data.Moesic   = []data.Moesic{}
-	currentTime float64         = 0
+	playlists        []data.Playlist = []data.Playlist{}
+	flatSongs        []data.Moesic   = []data.Moesic{}
+	globalPlayerTime float64         = 0 // * global progres music player
 )
 
 func main() {
@@ -62,50 +62,22 @@ func main() {
 	args := os.Args
 
 	if len(args) < 2 {
-		random := data.GetRandomSong(flatSongs);
-		ytb, err := GetYoutube(random.Url)
-		if err != nil {
-			fmt.Println("Error:", err)
-			return
-		}
-
-
-		cmd := play(ytb.Url)
-
-		p := tea.NewProgram(initialModel(cmd,random, ytb.Duration))
+		p := tea.NewProgram(initialModel(false), tea.WithAltScreen())
 		if _, err := p.Run(); err != nil {
 			fmt.Printf("Alas, there's been an error: %v", err)
 			os.Exit(1)
 		}
-
-		cmd.Wait()
-		// song := data.GetRandomSong(flatSongs)
-		// duration, err := getDuration(song.Url)
-		// if err != nil {
-		// 	fmt.Println("Error:", err)
-		// 	return
-		// }
-
-		// cmd := play(song.Url)
-
-		// p := tea.NewProgram(initialModel(cmd, song.Name, duration))
-		// if _, err := p.Run(); err != nil {
-		// 	fmt.Printf("Alas, there's been an error: %v", err)
-		// 	os.Exit(1)
-		// }
-
-		// cmd.Wait()
 		return
 	}
 
 	command := args[1]
 	switch command {
-	case "--playlist-random":
-		fmt.Println("Playing music...")
-	case "--pause":
-		fmt.Println("Pausing music...")
-	case "--stop":
-		fmt.Println("Stopping music...")
+	case "--single", "-s":
+		p := tea.NewProgram(initialModel(true), tea.WithAltScreen())
+		if _, err := p.Run(); err != nil {
+			fmt.Printf("Alas, there's been an error: %v", err)
+			os.Exit(1)
+		}
 	default:
 		printHelp()
 	}

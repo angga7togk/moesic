@@ -31,13 +31,14 @@ func play(url string) *exec.Cmd {
 				break
 			}
 
+			// * buat dengerin progress audio nya, entah itu video audio apapu itu
 			if strings.Contains(line, "A-V:") || strings.Contains(line, "M-A:") || strings.Contains(line, "M-V:") {
 				fields := strings.Fields(line)
 				if len(fields) > 0 {
 					timestampStr := fields[0]
 					timestamp, err := strconv.ParseFloat(timestampStr, 64)
 					if err == nil {
-						currentTime = timestamp
+						globalPlayerTime = timestamp
 					}
 				}
 			}
