@@ -24,11 +24,20 @@ type next struct {
 	duration float64
 }
 
+type options struct {
+	isRandomFlatMoesic bool // []{playlist, songs[]} -> songs[]
+	isRandomSingle     bool // just play one moesic
+	isRandomPlaylist   bool // play random playlist
+}
+
 type model struct {
 	current     playing
 	next        *next
 	loadingNext bool
-	single      bool
+	options     options
+
+	playlistIndex int
+	playlists     []data.Moesic // if options isRandomPlaylist
 }
 
 type progressTickMsg struct{}
@@ -36,10 +45,33 @@ type fetchNextSongMsg struct {
 	next *next
 }
 
+/*
+* fetching next playlist song
+*/
+func fetchNextPlaylistSongAsync(nextSong data.Moesic) tea.Cmd {
+	return func() tea.Msg {
+		ytb, err := GetAudio(nextSong.Url)
+		if err != nil {
+			return nil
+		}
+
+		return fetchNextSongMsg{
+			next: &next{
+				moesic:   nextSong,
+				url:      ytb.Url,
+				duration: ytb.Duration,
+			},
+		}
+	}
+}
+
+/*
+* fetching next random song for flat moesic
+ */
 func fetchNextAsync() tea.Cmd {
 	return func() tea.Msg {
 		newNextSong := data.GetRandomSong(flatSongs)
-		newNextYtb, err := GetYoutube(newNextSong.Url)
+		newNextYtb, err := GetAudio(newNextSong.Url)
 		if err != nil {
 			return nil
 		}
@@ -66,24 +98,45 @@ func drawCustomProgressBar(percent float64, width int) string {
 	return fmt.Sprintf("[%s%s]", strings.Repeat("█", filled), strings.Repeat("░", empty))
 }
 
-func initialModel(single bool) model {
-	randomSong := data.GetRandomSong(flatSongs)
-	ytb, err := GetYoutube(randomSong.Url)
-	if err != nil {
-		fmt.Println(err)
-	}
-	cmd := play(ytb.Url)
+func initialModel(options options) model {
+	var (
+		ytb  *Youtube
+		err  error
+		m    = model{options: options}
+		song data.Moesic
+	)
 
-	m := model{
-		current: playing{
-			player:      cmd,
-			moesic:      randomSong,
+	if options.isRandomSingle || options.isRandomFlatMoesic {
+		// * get one random moesic from all playlists
+		song = data.GetRandomSong(flatSongs)
+		ytb, err = GetAudio(song.Url)
+		if err != nil {
+			panic("Please try again :)")
+		}
+		m.current = playing{
+			moesic:      song,
 			duration:    ytb.Duration,
 			currentTime: 0,
-		},
-		single: single,
+		}
+	} else if options.isRandomPlaylist {
+		// * get one random playlist
+		playlist := data.GetRandomPlaylist(playlists)
+		m.playlistIndex = 0
+		m.playlists = playlist.Songs
+
+		song = m.playlists[m.playlistIndex]
+		ytb, err = GetAudio(song.Url)
+		if err != nil {
+			panic("Please try again :)")
+		}
+		m.current = playing{
+			moesic:      song,
+			duration:    ytb.Duration,
+			currentTime: 0,
+		}
 	}
 
+	m.current.player = play(ytb.Url)
 	return m
 }
 
@@ -103,7 +156,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.next != nil {
 				m.current.player.Process.Kill()
 				cmd := play(m.next.url)
-
 				m.current = playing{
 					player:      cmd,
 					moesic:      m.next.moesic,
@@ -112,34 +164,88 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 				m.next = nil
 			}
-
 		}
 
 	case progressTickMsg:
 		m.current.currentTime = globalPlayerTime
 
+		// * song completed
 		if m.current.currentTime >= m.current.duration {
-			if m.single {
-				m.current.player.Process.Kill()
-				return m, tea.Quit
-			} else {
-				if m.next != nil {
-					cmd := play(m.next.url)
+			m.current.player.Process.Kill()
 
-					m.current = playing{
-						player:      cmd,
-						moesic:      m.next.moesic,
-						duration:    m.next.duration,
-						currentTime: 0,
-					}
-					m.next = nil
+			switch {
+			case m.options.isRandomSingle:
+				return m, tea.Quit
+
+			case m.options.isRandomFlatMoesic:
+				song := data.GetRandomSong(flatSongs)
+				ytb, err := GetAudio(song.Url)
+				if err != nil {
+					fmt.Println("Error:", err)
+					return m, tea.Quit
 				}
+				cmd := play(ytb.Url)
+				m.current = playing{
+					player:      cmd,
+					moesic:      song,
+					duration:    ytb.Duration,
+					currentTime: 0,
+				}
+				return m, tickProgress()
+
+			case m.options.isRandomPlaylist:
+				m.playlistIndex++
+				if m.playlistIndex >= len(m.playlists) {
+					return m, tea.Quit
+				}
+
+				var (
+					song data.Moesic
+					url  string
+					dur  float64
+					cmd  *exec.Cmd
+				)
+
+				if m.next != nil {
+					song = m.next.moesic
+					url = m.next.url
+					dur = m.next.duration
+					m.next = nil
+				} else {
+					song = m.playlists[m.playlistIndex]
+					ytb, err := GetAudio(song.Url)
+					if err != nil {
+						fmt.Println("Error:", err)
+						return m, tea.Quit
+					}
+					url = ytb.Url
+					dur = ytb.Duration
+				}
+
+				cmd = play(url)
+				m.current = playing{
+					player:      cmd,
+					moesic:      song,
+					duration:    dur,
+					currentTime: 0,
+				}
+				return m, tickProgress()
+
 			}
 		}
 
-		if m.next == nil && int(m.current.currentTime) > 10 && !m.loadingNext && !m.single {
+		// * prepare next song
+		if m.next == nil && int(m.current.currentTime) > 10 && !m.loadingNext {
 			m.loadingNext = true
-			return m, tea.Batch(tickProgress(), fetchNextAsync())
+
+			if m.options.isRandomFlatMoesic {
+				return m, tea.Batch(tickProgress(), fetchNextAsync())
+			}
+
+			if m.options.isRandomPlaylist && m.playlistIndex+1 < len(m.playlists) {
+				nextSong := m.playlists[m.playlistIndex+1]
+				return m, tea.Batch(tickProgress(), fetchNextPlaylistSongAsync(nextSong))
+			}
 		}
 
 		return m, tickProgress()
@@ -148,7 +254,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.next = msg.next
 		m.loadingNext = false
 		return m, nil
-
 	}
 
 	return m, nil
@@ -165,24 +270,16 @@ func (m model) View() string {
 		Padding(1).
 		BorderStyle(lipgloss.NormalBorder())
 
-	// Components
 	progressBar := drawCustomProgressBar(percent, 15)
-	nextSongInfo := "Next: loading...\n\n"
-	if m.next != nil {
-		nextSongInfo = fmt.Sprintf("Next: %s\n\n", m.next.moesic.Name)
-	}
-	if m.single {
-		nextSongInfo = ""
-	}
+
 	info := fmt.Sprintf(
-		"%s\n%s\n\n%s %s/%s\n\n%s%s",
+		"%s\n%s\n\n%s %s/%s\n\n%s",
 		lipgloss.NewStyle().Bold(true).Render(m.current.moesic.Name),
 		lipgloss.NewStyle().Italic(true).Render(m.current.moesic.PlaylistName),
 		progressBar,
 		formatTime(m.current.currentTime),
 		formatTime(m.current.duration),
-		lipgloss.NewStyle().Italic(true).Render(nextSongInfo),
-		lipgloss.NewStyle().Width(38).Align(lipgloss.Right).Render(fmt.Sprintf("%skip S%surce %suit",
+		lipgloss.NewStyle().Render(fmt.Sprintf("%skip S%surce %suit",
 			lipgloss.NewStyle().Bold(true).Render("[S]"),
 			lipgloss.NewStyle().Bold(true).Render("[o]"),
 			lipgloss.NewStyle().Bold(true).Render("[Q]"),
