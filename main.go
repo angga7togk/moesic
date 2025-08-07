@@ -42,7 +42,7 @@ func printHelp() {
 
 	fmt.Println()
 	fmt.Println(sectionStyle.Render("Options:"))
-	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "--random, --play, -p")) + descriptionStyle.Render("Play random flat moesic"))
+	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "--random, --play, -p, -r")) + descriptionStyle.Render("Play random flat moesic"))
 	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "--random-playlist, -rp")) + descriptionStyle.Render("Play random playlist"))
 	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "--random-single, -rs")) + descriptionStyle.Render("Play random single moesic"))
 	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "--help, -h")) + descriptionStyle.Render("Command help"))

@@ -2,21 +2,57 @@
 
 **Moesic** is a freely accessible and open collection of Japanese music and anime. The project is **open source**, with the goal of providing a simple, aesthetically pleasing music listening experience focused on Japanese and anime content.
 
+## Installation
+
+### Linux / macOS
+
+Run the following command to install Moesic:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/angga7togk/moesic/main/install.sh | sh
+```
+
+Alternatively, you can download and run the installation script manually:
+
+```bash
+wget https://raw.githubusercontent.com/angga7togk/moesic/main/install.sh
+chmod +x install.sh
+./install.sh
+```
+
+### Windows
+
+#### Option 1: Using PowerShell
+
+Run the following command in PowerShell:
+
+```powershell
+iwr -useb https://raw.githubusercontent.com/angga7togk/moesic/main/install.ps1 | iex
+```
+
+#### Option 2: Using Batch File
+
+Download and run [`install-windows.bat`](https://raw.githubusercontent.com/angga7togk/moesic/main/install-windows.bat).
+
+### Manual Installation
+
+Please download the latest version of Moesic from the [Releases](https://github.com/angga7togk/moesic/releases) page and place the binary in your system path.
+
+## Contributing
+
+If you would like to contribute by adding your favorite music or playlist, please read the [Contributing Guide](data/CONTRIBUTING.md).
+
 ## Preview
 
 ![Moesic Logo](.github/img/preview.png)
 
-## Download
-Please download the latest version of moesic at [Releases](https://github.com/angga7togk/moesic/releases)
+```bash
+ __  __  ___  ___ ___ ___ ___
+|  \/  |/ _ \| __/ __|_ _/ __|
+| |\/| | (_) | _|\__ \| | (__
+|_|  |_|\___/|___|___/___\___|
 
 
-```bash                    
- __  __  ___  ___ ___ ___ ___  
-|  \/  |/ _ \| __/ __|_ _/ __| 
-| |\/| | (_) | _|\__ \| | (__  
-|_|  |_|\___/|___|___/___\___| 
-                               
-                               
 ⭐️ Star to support our work!
    https://github.com/angga7togk/moesic
 
