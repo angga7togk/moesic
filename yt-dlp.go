@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os/exec"
-	"runtime"
 )
 
 type Youtube struct {
@@ -12,20 +11,9 @@ type Youtube struct {
 	Url      string
 }
 
-func GetYoutube(videoURL string) (*Youtube, error) {
-	var binary string
-	switch runtime.GOOS {
-	case "linux":
-		binary = "./bin/yt-dlp_linux"
-	case "windows":
-		binary = "./bin/yt-dlp_win.exe"
-	case "darwin":
-		binary = "./bin/yt-dlp_macos"
-	default:
-		return nil, fmt.Errorf("unsupported OS: %s", runtime.GOOS)
-	}
-
-	cmd := exec.Command(binary, "-f", "bestaudio[ext=m4a]", "-j", videoURL)
+func GetAudio(videoURL string) (*Youtube, error) {
+	path := getYtDlpPath()
+	cmd := exec.Command(path, "-f", "bestaudio[ext=m4a]", "-j", videoURL)
 	output, err := cmd.Output()
 	if err != nil {
 		return nil, fmt.Errorf("yt-dlp error: %v", err)
@@ -49,8 +37,6 @@ func GetYoutube(videoURL string) (*Youtube, error) {
 
 	for _, format := range data.Formats {
 		if format.Ext == "m4a" && format.VCodec == "none" {
-
-			// kurangin 0.5 biar pas progress nya ke 100% dan menghindari macet saat next music
 			dur := data.Duration
 			if dur > 0.5 {
 				dur -= 0.5
