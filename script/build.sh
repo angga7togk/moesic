@@ -1,19 +1,26 @@
 #!/bin/bash
 
 APP_NAME="moesic"
-SRC_FILE="main.go"
 OUTPUT_DIR="dist"
 
-# Buat folder output
+rm -rf $OUTPUT_DIR
 mkdir -p $OUTPUT_DIR
 
-# Build untuk Linux (64-bit)
-GOOS=linux GOARCH=amd64 go build -o $OUTPUT_DIR/$APP_NAME-linux $SRC_FILE
 
-# Build untuk Windows (64-bit)
-GOOS=windows GOARCH=amd64 go build -o $OUTPUT_DIR/$APP_NAME-windows.exe $SRC_FILE
+echo "linux/amd64 building..."
+GOOS=linux GOARCH=amd64 go build -o $OUTPUT_DIR/$APP_NAME-linux
+echo "linux/amd64 builded!"
 
-# Build untuk macOS (64-bit Intel)
-GOOS=darwin GOARCH=amd64 go build -o $OUTPUT_DIR/$APP_NAME-macos $SRC_FILE
+echo "windows/amd64 building..."
+GOOS=windows GOARCH=amd64 go build -o $OUTPUT_DIR/$APP_NAME-windows.exe
+echo "windows/amd64 builded!"
 
-echo "✅ Build selesai! File ada di folder '$OUTPUT_DIR'"
+echo "darwin/amd64 building..."
+GOOS=darwin GOARCH=amd64 go build -o $OUTPUT_DIR/$APP_NAME-macos
+echo "darwin/amd64 builded!"
+
+echo "darwin/arm64 building..."
+GOOS=darwin GOARCH=arm64 go build -o $OUTPUT_DIR/$APP_NAME-macos-arm64
+echo "darwin/arm64 builded!"
+
+echo "done all: '$OUTPUT_DIR'"
