@@ -9,7 +9,7 @@
 Run the following command to install Moesic:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/angga7togk/moesic/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/angga7togk/moesic/main/install.sh | bash
 ```
 
 Alternatively, you can download and run the installation script manually:
