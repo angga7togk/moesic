@@ -36,9 +36,9 @@ func play(url string) *exec.Cmd {
 				fields := strings.Fields(line)
 				if len(fields) > 0 {
 					timestampStr := fields[0]
-					timestamp, err := strconv.ParseFloat(timestampStr, 64)
+					f, err := strconv.ParseFloat(timestampStr, 64)
 					if err == nil {
-						globalPlayerTime = timestamp
+						globalPlayerTime = int64(f)
 					}
 				}
 			}
