@@ -2,13 +2,15 @@
 
 **Moesic** is a freely accessible and open collection of Japanese music and anime. The project is **open source**, with the goal of providing a simple, aesthetically pleasing music listening experience focused on Japanese and anime content.
 
-## Requirements
+## FFmpeg Required
 
-* [FFmpeg](https://ffmpeg.org/) must be installed and available in your system PATH.
+Manual download please visit the following website [ffmpeg.org](https://ffmpeg.org/)
 
 ### Install FFmpeg
 
 #### Linux (Debian/Ubuntu)
+
+Usually Linux already has ffmpeg built in, if not, please install it using the following command
 
 ```bash
 sudo apt update && sudo apt install ffmpeg
@@ -22,16 +24,16 @@ brew install ffmpeg
 
 #### Windows
 
-Download FFmpeg from the official website:
+```bash
+# use choco
+choco install ffmpeg
 
-* [https://ffmpeg.org/download.html](https://ffmpeg.org/download.html)
-* Or directly from: [https://www.gyan.dev/ffmpeg/builds/](https://www.gyan.dev/ffmpeg/builds/)
+# use scoop
+scoop install ffmpeg
 
-Extract the ZIP, then:
-
-1. Copy the `bin` folder path (e.g., `C:\ffmpeg\bin`)
-2. Add it to your **System Environment Variables > Path**
-3. Open new terminal and run `ffmpeg -version` to verify
+# use winget
+winget install ffmpeg
+```
 
 ---
 
