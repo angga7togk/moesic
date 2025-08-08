@@ -59,3 +59,7 @@
 - [HTT - Samidare 20 Love | Studio Mix](https://www.youtube.com/watch?v=F2Lib80_XQI)
 - [HTT - Gohan wa Okazu | Studio Mix](https://www.youtube.com/watch?v=oLlrefw9s-g)
 - [HTT - U&I | Studio Mix](https://www.youtube.com/watch?v=lry448Jkcj4)
+
+### AnoHana
+- [AnoHana Opening | Aoi Shiori](https://www.youtube.com/watch?v=8H9z5ZuGmBw)
+- [AnoHana Ending | Kimi ga Kureta Mono](https://www.youtube.com/watch?v=SJywJjwqIK8)
