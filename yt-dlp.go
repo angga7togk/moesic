@@ -7,7 +7,7 @@ import (
 )
 
 type Youtube struct {
-	Duration float64
+	Duration int64
 	Url      string
 }
 
@@ -20,8 +20,8 @@ func GetAudio(videoURL string) (*Youtube, error) {
 	}
 
 	var data struct {
-		Duration float64 `json:"duration"`
-		URL      string  `json:"url"`
+		Duration int64    `json:"duration"`
+		URL      string `json:"url"`
 		Formats  []struct {
 			Ext      string `json:"ext"`
 			ACodec   string `json:"acodec"`
@@ -37,10 +37,9 @@ func GetAudio(videoURL string) (*Youtube, error) {
 
 	for _, format := range data.Formats {
 		if format.Ext == "m4a" && format.VCodec == "none" {
-			dur := data.Duration
-			if dur > 0.5 {
-				dur -= 0.5
-			}
+			// * gw kurangin 1 soalnya biasanya, durasi 4:26 trus progrssnya cuman nyampe 4:25
+			// * ya sementara solusinya cuman ini :)
+			dur := data.Duration - 1 
 			return &Youtube{
 				Duration: dur,
 				Url:      format.URL,

@@ -53,7 +53,7 @@ func printHelp() {
 var (
 	playlists        []data.Playlist = []data.Playlist{}
 	flatSongs        []data.Moesic   = []data.Moesic{}
-	globalPlayerTime float64         = 0 // * global progres music player
+	globalPlayerTime int64           = 0 // * global progres music player
 )
 
 func main() {
@@ -73,7 +73,7 @@ func main() {
 	switch command {
 	case "--random", "--play", "-p":
 		p := tea.NewProgram(initialModel(options{
-			isRandomFlatMoesic: true,
+			isPlayOne: false,
 		}), tea.WithAltScreen())
 		if _, err := p.Run(); err != nil {
 			fmt.Printf("Alas, there's been an error: %v", err)
@@ -81,16 +81,14 @@ func main() {
 		}
 	case "--random-single", "-rs":
 		p := tea.NewProgram(initialModel(options{
-			isRandomSingle: true,
+			isPlayOne: true,
 		}), tea.WithAltScreen())
 		if _, err := p.Run(); err != nil {
 			fmt.Printf("Alas, there's been an error: %v", err)
 			os.Exit(1)
 		}
 	case "--random-playlist", "-rp":
-		p := tea.NewProgram(initialModel(options{
-			isRandomPlaylist: true,
-		}), tea.WithAltScreen())
+		p := tea.NewProgram(initialPlayerPlaylistplaylistModel(), tea.WithAltScreen())
 		if _, err := p.Run(); err != nil {
 			fmt.Printf("Alas, there's been an error: %v", err)
 			os.Exit(1)
