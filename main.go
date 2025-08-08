@@ -9,12 +9,23 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-func printHelp() {
+func headerString() string {
 	titleStyle := lipgloss.NewStyle().
 		Bold(true).
 		Foreground(lipgloss.Color("#FF5F87")).
 		PaddingBottom(1)
 
+	return fmt.Sprintf("%s\n%s\n",
+		titleStyle.Render(` 
+ __  __  ___  ___ ___ ___ ___ 
+|  \/  |/ _ \| __/ __|_ _/ __|
+| |\/| | (_) | _|\__ \| | (__ 
+|_|  |_|\___/|___|___/___\___|
+                               `),
+		"⭐️ Star to support our work!")
+}
+
+func printHelp() {
 	sectionStyle := lipgloss.NewStyle().
 		Bold(true).
 		Underline(true).
@@ -26,27 +37,20 @@ func printHelp() {
 	descriptionStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("#AFAFAF"))
 
-	// Output
-	fmt.Println(titleStyle.Render(` 
- __  __  ___  ___ ___ ___ ___ 
-|  \/  |/ _ \| __/ __|_ _/ __|
-| |\/| | (_) | _|\__ \| | (__ 
-|_|  |_|\___/|___|___/___\___|
-                               `))
-	fmt.Println("⭐️ Star to support our work!")
+	fmt.Print(headerString())
 	fmt.Print(lipgloss.NewStyle().Inline(true).Foreground(lipgloss.Color("#4157ba")).Render("   https://github.com/angga7togk/moesic"))
 	fmt.Println()
 	fmt.Println()
 	fmt.Println(sectionStyle.Render("Usage:"))
-	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "moesic <options>")) + descriptionStyle.Render("Moesic CLI"))
+	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "moesic play")) + descriptionStyle.Render("Play flat moesic"))
+	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "moesic playlist")) + descriptionStyle.Render("Play playlist"))
+	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "moesic version")) + descriptionStyle.Render("Moesic version"))
+	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "moesic help")) + descriptionStyle.Render("Moesic Help"))
 
 	fmt.Println()
 	fmt.Println(sectionStyle.Render("Options:"))
-	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "--random, --play, -p, -r")) + descriptionStyle.Render("Play random flat moesic"))
-	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "--random-playlist, -rp")) + descriptionStyle.Render("Play random playlist"))
-	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "--random-single, -rs")) + descriptionStyle.Render("Play random single moesic"))
-	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "--help, -h")) + descriptionStyle.Render("Command help"))
-	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "--info, -i")) + descriptionStyle.Render("Moesic info"))
+	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "--random, -r")) + descriptionStyle.Render("Random options"))
+	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "--one, -o")) + descriptionStyle.Render("Just play one moesic not next or skiped"))
 	fmt.Print("\n\n")
 }
 
@@ -69,29 +73,42 @@ func main() {
 		return
 	}
 
-	command := args[1]
-	switch command {
-	case "--random", "--play", "-p":
-		p := tea.NewProgram(initialModel(options{
-			isPlayOne: false,
-		}), tea.WithAltScreen())
-		if _, err := p.Run(); err != nil {
-			fmt.Printf("Alas, there's been an error: %v", err)
-			os.Exit(1)
+	switch args[1] {
+	case "playlist":
+		if len(args) > 2 {
+			if argsHas("--random", "-r") {
+				p := tea.NewProgram(initialPlayerPlaylistplaylistModel(nil), tea.WithAltScreen())
+				if _, err := p.Run(); err != nil {
+					fmt.Printf("Alas, there's been an error: %v", err)
+					os.Exit(1)
+				}
+			} else {
+				printHelp()
+			}
+		} else {
+			if _, err := tea.NewProgram(initSearchModel()).Run(); err != nil {
+				fmt.Println("Error running program:", err)
+				os.Exit(1)
+			}
 		}
-	case "--random-single", "-rs":
-		p := tea.NewProgram(initialModel(options{
-			isPlayOne: true,
-		}), tea.WithAltScreen())
-		if _, err := p.Run(); err != nil {
-			fmt.Printf("Alas, there's been an error: %v", err)
-			os.Exit(1)
-		}
-	case "--random-playlist", "-rp":
-		p := tea.NewProgram(initialPlayerPlaylistplaylistModel(), tea.WithAltScreen())
-		if _, err := p.Run(); err != nil {
-			fmt.Printf("Alas, there's been an error: %v", err)
-			os.Exit(1)
+	case "play":
+		if len(args) > 2 {
+			if argsHas("--random", "-r") {
+				p := tea.NewProgram(initialModel(options{
+					isPlayOne: argsHas("--one", "-o"),
+				}), tea.WithAltScreen())
+				if _, err := p.Run(); err != nil {
+					fmt.Printf("Alas, there's been an error: %v", err)
+					os.Exit(1)
+				}
+			} else {
+				printHelp()
+			}
+		} else {
+			if _, err := tea.NewProgram(initSearchFlatModel()).Run(); err != nil {
+				fmt.Println("Error running program:", err)
+				os.Exit(1)
+			}
 		}
 	default:
 		printHelp()

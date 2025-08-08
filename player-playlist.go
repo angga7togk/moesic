@@ -51,15 +51,20 @@ func fetchNextPlaylistSongAsync(nextIndex int, nextSong playlistSongNext) tea.Cm
 	}
 }
 
-func initialPlayerPlaylistplaylistModel() playlistModel {
+func initialPlayerPlaylistplaylistModel(pl *data.Playlist) playlistModel {
 	var (
-		ytb *Youtube
-		err error
-		m   = playlistModel{}
+		ytb      *Youtube
+		err      error
+		m        = playlistModel{}
+		playlist data.Playlist
 	)
 
 	// * get one random playlist
-	playlist := data.GetRandomPlaylist(playlists)
+	if pl == nil {
+		playlist = data.GetRandomPlaylist(playlists)
+	} else {
+		playlist = *pl
+	}
 	m.playlistIndex = 0
 	m.playlists = []playlistSongNext{}
 
@@ -93,7 +98,7 @@ func (m playlistModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "q":
+		case "q", "ctrl+c":
 			m.currentPlayer.Process.Kill()
 			return m, tea.Quit
 		case "s":

@@ -81,23 +81,23 @@ If you would like to contribute by adding your favorite music or playlist, pleas
 
 ![Moesic Logo](.github/img/preview.png)
 
-```bash
- __  __  ___  ___ ___ ___ ___
-|  \/  |/ _ \| __/ __|_ _/ __|
-| |\/| | (_) | _|\__ \| | (__
-|_|  |_|\___/|___|___/___\___|
-
-
+```bash                 
+ __  __  ___  ___ ___ ___ ___  
+|  \/  |/ _ \| __/ __|_ _/ __| 
+| |\/| | (_) | _|\__ \| | (__  
+|_|  |_|\___/|___|___/___\___| 
+                               
+                               
 ⭐️ Star to support our work!
    https://github.com/angga7togk/moesic
 
 Usage:
-  moesic <options>              Moesic CLI
+  moesic play                   Play flat moesic
+  moesic playlist               Play playlist
+  moesic version                Moesic version
+  moesic help                   Moesic Help
 
 Options:
-  --random, --play, -p          Play random flat moesic
-  --random-playlist, -rp        Play random playlist
-  --random-single, -rs          Play random single moesic
-  --help, -h                    Command help
-  --info, -i                    Moesic info
+  --random, -r                  Random options
+  --one, -o                     Just play one moesic not next or skiped
 ```

@@ -19,6 +19,7 @@ type next struct {
 
 type options struct {
 	isPlayOne bool // just play one moesic
+	moesic    *data.Moesic
 }
 
 type playerModel struct {
@@ -87,8 +88,16 @@ func initialModel(options options) playerModel {
 	)
 
 	for {
-		song = data.GetRandomSong(flatSongs)
-		ytb, err = GetAudio(song.Url)
+		var url string
+		if options.moesic == nil {
+			song = data.GetRandomSong(flatSongs)
+			url = song.Url
+		} else {
+			song = *options.moesic
+			url = song.Url
+		}
+
+		ytb, err = GetAudio(url)
 		if err == nil {
 			m.currentMoesic = song
 			m.currentDuration = ytb.Duration
@@ -110,7 +119,7 @@ func (m playerModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "q":
+		case "q", "ctrl+c":
 			m.currentPlayer.Process.Kill()
 			return m, tea.Quit
 		case "s":
