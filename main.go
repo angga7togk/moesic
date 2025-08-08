@@ -58,6 +58,7 @@ var (
 	playlists        []data.Playlist = []data.Playlist{}
 	flatSongs        []data.Moesic   = []data.Moesic{}
 	globalPlayerTime int64           = 0 // * global progres music player
+	version                          = "1.0.2"
 )
 
 func main() {
@@ -110,6 +111,8 @@ func main() {
 				os.Exit(1)
 			}
 		}
+	case "version":
+		fmt.Printf("Current version: %s\n", version)
 	default:
 		printHelp()
 	}
