@@ -53,7 +53,6 @@ func printHelp() {
 var (
 	playlists        []data.Playlist = []data.Playlist{}
 	flatSongs        []data.Moesic   = []data.Moesic{}
-	globalPlayerTime float64         = 0 // * global progres music player
 )
 
 func main() {

@@ -4,11 +4,12 @@ import (
 	"bufio"
 	"fmt"
 	"os/exec"
-	"strconv"
+	// "strconv"
 	"strings"
 )
 
-func play(url string) *exec.Cmd {
+
+func playFFmpeg(url string) *exec.Cmd {
 	cmd := exec.Command("ffplay", "-nodisp", "-autoexit", "-loglevel", "info", "-infbuf", url)
 
 	stderrPipe, err := cmd.StderrPipe()
@@ -35,10 +36,10 @@ func play(url string) *exec.Cmd {
 			if strings.Contains(line, "A-V:") || strings.Contains(line, "M-A:") || strings.Contains(line, "M-V:") {
 				fields := strings.Fields(line)
 				if len(fields) > 0 {
-					timestampStr := fields[0]
-					timestamp, err := strconv.ParseFloat(timestampStr, 64)
+					// timestampStr := fields[0]
+					// timestamp, err := strconv.ParseFloat(timestampStr, 64)
 					if err == nil {
-						globalPlayerTime = timestamp
+						// globalPlayerTime = timestamp
 					}
 				}
 			}

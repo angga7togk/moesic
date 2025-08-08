@@ -12,16 +12,22 @@ require (
 require (
 	github.com/VividCortex/ewma v1.2.0 // indirect
 	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d // indirect
+	github.com/adrg/libvlc-go/v3 v3.1.6 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/bitly/go-simplejson v0.5.1 // indirect
 	github.com/dlclark/regexp2 v1.11.5 // indirect
 	github.com/dop251/goja v0.0.0-20250125213203-5ef83b82af17 // indirect
+	github.com/ebitengine/oto/v3 v3.3.2 // indirect
+	github.com/ebitengine/purego v0.8.0 // indirect
 	github.com/go-sourcemap/sourcemap v2.1.4+incompatible // indirect
 	github.com/google/pprof v0.0.0-20250208200701-d0013a598941 // indirect
 	github.com/google/uuid v1.1.1 // indirect
+	github.com/gopxl/beep/v2 v2.1.1 // indirect
+	github.com/hajimehoshi/go-mp3 v0.3.4 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kkdai/youtube v1.2.4 // indirect
 	github.com/kkdai/youtube/v2 v2.10.4 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sahilm/fuzzy v0.1.1 // indirect
 	github.com/spf13/cobra v1.9.1 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect

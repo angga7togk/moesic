@@ -2,38 +2,21 @@
 
 **Moesic** is a freely accessible and open collection of Japanese music and anime. The project is **open source**, with the goal of providing a simple, aesthetically pleasing music listening experience focused on Japanese and anime content.
 
+## Why VLC?
+
+Moesic now uses [VLC media player](https://www.videolan.org/vlc/) as its playback backend because VLC is:
+
+* Cross-platform and widely supported
+* Easy to install and available via package managers or direct downloads
+* Actively maintained with robust media format support
+* Not reliant on FFmpeg setup or codec configurations
+
+This makes Moesic more user-friendly and ensures smoother playback experience across systems.
+
 ## Requirements
 
-* [FFmpeg](https://ffmpeg.org/) must be installed and available in your system PATH.
+* [VLC media player](https://www.videolan.org/vlc/) must be installed and available in your devices.
 
-### Install FFmpeg
-
-#### Linux (Debian/Ubuntu)
-
-```bash
-sudo apt update && sudo apt install ffmpeg
-```
-
-#### macOS (with Homebrew)
-
-```bash
-brew install ffmpeg
-```
-
-#### Windows
-
-Download FFmpeg from the official website:
-
-* [https://ffmpeg.org/download.html](https://ffmpeg.org/download.html)
-* Or directly from: [https://www.gyan.dev/ffmpeg/builds/](https://www.gyan.dev/ffmpeg/builds/)
-
-Extract the ZIP, then:
-
-1. Copy the `bin` folder path (e.g., `C:\ffmpeg\bin`)
-2. Add it to your **System Environment Variables > Path**
-3. Open new terminal and run `ffmpeg -version` to verify
-
----
 
 ## Installation
 
