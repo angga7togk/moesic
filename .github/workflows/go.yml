@@ -87,15 +87,15 @@ jobs:
           fi
         shell: bash
 
-      - name: Install Moesic from script
-        run: |
-          if [ "$RUNNER_OS" == "Linux" ] || [ "$RUNNER_OS" == "macOS" ]; then
-            curl -fsSL https://raw.githubusercontent.com/angga7togk/moesic/main/install.sh | bash
-          elif [ "$RUNNER_OS" == "Windows" ]; then
-            # PowerShell default di Actions
-            iwr -useb https://raw.githubusercontent.com/angga7togk/moesic/main/install.ps1 | iex
-          fi
+      - name: Install Moesic from script (Linux/macOS)
+        if: runner.os == 'Linux' || runner.os == 'macOS'
+        run: curl -fsSL https://raw.githubusercontent.com/angga7togk/moesic/main/install.sh | bash
         shell: bash
+
+      - name: Install Moesic from script (Windows)
+        if: runner.os == 'Windows'
+        run: iwr -useb https://raw.githubusercontent.com/angga7togk/moesic/main/install.ps1 | iex
+        shell: pwsh
 
       - name: Test Moesic
         run: |
