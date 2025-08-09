@@ -14,7 +14,7 @@ on:
       - '**/*.md'
 
 jobs:
-  build:
+  build-dev:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -30,7 +30,6 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
-      # Install ffmpeg sesuai OS
       - name: Install ffmpeg
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
@@ -43,16 +42,29 @@ jobs:
           fi
         shell: bash
 
-      # Build binary
       - name: Build project
         run: go build -v -o moesic .
 
-      # Run binary (cross platform command)
       - name: Run moesic
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
-            ./moesic.exe || true
+            ./moesic.exe play --test || true
           else
-            ./moesic || true
+            ./moesic play --test || true
           fi
         shell: bash
+
+  build-archlinux:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          pacman -Sy --noconfirm go ffmpeg git
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Build project
+        run: go build -v -o moesic .
+      - name: Run moesic
+        run: ./moesic play --test || true
