@@ -12,8 +12,7 @@ import (
 
 type playlistSongNext struct {
 	moesic   data.Moesic
-	url      *string // url player
-	duration *int64
+	audioUrl *string // url player
 }
 
 type playlistModel struct {
@@ -34,14 +33,13 @@ type fetchNextPlaylistSongMsg struct {
 func fetchNextPlaylistSongAsync(nextIndex int, nextSong playlistSongNext) tea.Cmd {
 	return func() tea.Msg {
 		for {
-			ytb, err := GetAudio(nextSong.moesic.Url)
+			audioUrl, err := GetAudio(nextSong.moesic.Url)
 			if err == nil {
 				return fetchNextPlaylistSongMsg{
 					index: nextIndex,
 					next: &playlistSongNext{
 						moesic:   nextSong.moesic,
-						url:      &ytb.Url,
-						duration: &ytb.Duration,
+						audioUrl: &audioUrl,
 					},
 				}
 			}
@@ -53,7 +51,7 @@ func fetchNextPlaylistSongAsync(nextIndex int, nextSong playlistSongNext) tea.Cm
 
 func initialPlayerPlaylistplaylistModel(pl *data.Playlist) playlistModel {
 	var (
-		ytb      *Youtube
+		audioUrl string
 		err      error
 		m        = playlistModel{}
 		playlist data.Playlist
@@ -76,16 +74,15 @@ func initialPlayerPlaylistplaylistModel(pl *data.Playlist) playlistModel {
 	// * loop get audio ke yt-dlp
 	for {
 		playlistSongNext := m.playlists[m.playlistIndex]
-		ytb, err = GetAudio(playlistSongNext.moesic.Url)
+		audioUrl, err = GetAudio(playlistSongNext.moesic.Url)
 		if err == nil {
-			m.playlists[m.playlistIndex].duration = &ytb.Duration
-			m.playlists[m.playlistIndex].url = &ytb.Url
+			m.playlists[m.playlistIndex].audioUrl = &audioUrl
 			break
 		}
 
 	}
 
-	m.currentPlayer = play(ytb.Url)
+	m.currentPlayer = play(audioUrl)
 	return m
 }
 
@@ -111,26 +108,23 @@ func (m playlistModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// * kalau next song blom di fetching fetching dulu
 			nextIndex := m.playlistIndex
 			nextSong := m.playlists[nextIndex]
-			if nextSong.url == nil {
+			if nextSong.audioUrl == nil {
 				for {
-					ytb, err := GetAudio(nextSong.moesic.Url)
+					audioUrl, err := GetAudio(nextSong.moesic.Url)
 					if err == nil {
-						m.playlists[nextIndex].duration = &ytb.Duration
-						m.playlists[nextIndex].url = &ytb.Url
+						m.playlists[nextIndex].audioUrl = &audioUrl
 						break
 					}
 				}
 			}
 
-			m.currentPlayer = play(*m.playlists[nextIndex].url)
+			m.currentPlayer = play(*m.playlists[nextIndex].audioUrl)
 			return m, tickProgress()
 		}
 
 	case progressTickMsg:
-		current := m.playlists[m.playlistIndex]
-
 		// * song completed
-		if globalPlayerTime >= *current.duration {
+		if globalCurrentTime >= globalCurrentDuration{
 			m.currentPlayer.Process.Kill()
 			m.playlistIndex++
 			if m.playlistIndex >= len(m.playlists) {
@@ -140,26 +134,27 @@ func (m playlistModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// * kalau next song blom di fetching fetching dulu
 			nextIndex := m.playlistIndex
 			nextSong := m.playlists[nextIndex]
-			if nextSong.url == nil {
+			if nextSong.audioUrl == nil {
 				for {
-					ytb, err := GetAudio(nextSong.moesic.Url)
+					audioUrl, err := GetAudio(nextSong.moesic.Url)
 					if err == nil {
-						m.playlists[nextIndex].duration = &ytb.Duration
-						m.playlists[nextIndex].url = &ytb.Url
+						m.playlists[nextIndex].audioUrl = &audioUrl
 						break
 					}
 				}
 			}
 
-			m.currentPlayer = play(*m.playlists[nextIndex].url)
+			m.currentPlayer = play(*m.playlists[nextIndex].audioUrl)
 			return m, tickProgress()
 		}
 
 		// * prepare next song
-		if globalPlayerTime > 5 && !m.loadingNext {
+		if globalCurrentTime > 5 && !m.loadingNext {
 			m.loadingNext = true
 			nextSong := m.playlists[m.playlistIndex+1]
-			return m, tea.Batch(tickProgress(), fetchNextPlaylistSongAsync(m.playlistIndex+1, nextSong))
+			if nextSong.audioUrl == nil {
+				return m, tea.Batch(tickProgress(), fetchNextPlaylistSongAsync(m.playlistIndex+1, nextSong))
+			}
 		}
 
 		return m, tickProgress()
@@ -178,7 +173,7 @@ func (m playlistModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m playlistModel) View() string {
 	current := m.playlists[m.playlistIndex]
-	percent := int(float64(globalPlayerTime) / float64(*current.duration) * 100)
+	percent := int(float64(globalCurrentTime) / float64(globalCurrentDuration) * 100)
 	if percent > 100 {
 		percent = 100
 	}
@@ -195,8 +190,8 @@ func (m playlistModel) View() string {
 		lipgloss.NewStyle().Bold(true).Render(current.moesic.Name),
 		lipgloss.NewStyle().Italic(true).Render(current.moesic.PlaylistName),
 		progressBar,
-		formatTime(globalPlayerTime),
-		formatTime(*current.duration),
+		formatTime(globalCurrentTime),
+		formatTime(globalCurrentDuration),
 		lipgloss.NewStyle().Render(fmt.Sprintf("%skip S%surce %suit",
 			lipgloss.NewStyle().Bold(true).Render("[S]"),
 			lipgloss.NewStyle().Bold(true).Render("[o]"),
