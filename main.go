@@ -51,14 +51,14 @@ func printHelp() {
 	fmt.Println(sectionStyle.Render("Options:"))
 	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "--random, -r")) + descriptionStyle.Render("Random options"))
 	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "--one, -o")) + descriptionStyle.Render("Just play one moesic not next or skiped"))
+	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "--test")) + descriptionStyle.Render("Play Megumin's explosion (for Test)"))
 	fmt.Print("\n\n")
 }
 
 var (
-	playlists        []data.Playlist = []data.Playlist{}
-	flatSongs        []data.Moesic   = []data.Moesic{}
-	globalPlayerTime int64           = 0 // * global progres music player
-	version                          = "1.0.2"
+	playlists []data.Playlist = []data.Playlist{}
+	flatSongs []data.Moesic   = []data.Moesic{}
+	version                   = "1.0.2"
 )
 
 func main() {
@@ -97,6 +97,19 @@ func main() {
 			if argsHas("--random", "-r") {
 				p := tea.NewProgram(initialModel(options{
 					isPlayOne: argsHas("--one", "-o"),
+				}), tea.WithAltScreen())
+				if _, err := p.Run(); err != nil {
+					fmt.Printf("Alas, there's been an error: %v", err)
+					os.Exit(1)
+				}
+			} else if argsHas("--test") {
+				p := tea.NewProgram(initialModel(options{
+					isPlayOne: true,
+					moesic: &data.Moesic{
+						Name:         "Megumin's explosion destroys Chomusuke!",
+						PlaylistName: "Konosuba",
+						Url:          "https://www.youtube.com/watch?v=IQU49JbStVA",
+					},
 				}), tea.WithAltScreen())
 				if _, err := p.Run(); err != nil {
 					fmt.Printf("Alas, there's been an error: %v", err)
