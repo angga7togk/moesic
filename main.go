@@ -44,6 +44,7 @@ func printHelp() {
 	fmt.Println(sectionStyle.Render("Usage:"))
 	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "moesic play")) + descriptionStyle.Render("Play flat moesic"))
 	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "moesic playlist")) + descriptionStyle.Render("Play playlist"))
+	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "moesic update")) + descriptionStyle.Render("Update dependencies"))
 	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "moesic version")) + descriptionStyle.Render("Moesic version"))
 	fmt.Println("  " + optionNameStyle.Render(fmt.Sprintf("%-30s", "moesic help")) + descriptionStyle.Render("Moesic Help"))
 
@@ -58,11 +59,11 @@ func printHelp() {
 var (
 	playlists []data.Playlist = []data.Playlist{}
 	flatSongs []data.Moesic   = []data.Moesic{}
-	version                   = "1.0.2"
+	version                   = "1.0.3"
 )
 
 func main() {
-	InstallDependencies()
+	InstallDependencies(false)
 
 	playlists = data.GetMoesic()
 	flatSongs = data.FlatSongs(playlists)
@@ -124,6 +125,8 @@ func main() {
 				os.Exit(1)
 			}
 		}
+	case "update":
+		InstallDependencies(true)
 	case "version":
 		fmt.Printf("Current version: %s\n", version)
 	default:

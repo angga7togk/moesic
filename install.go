@@ -63,17 +63,24 @@ func downloadYtDlp(dest string) error {
 	return nil
 }
 
-func ensureYtDlp() string {
+func ensureYtDlp(force bool) string {
 	path := getYtDlpPath()
-	if _, err := os.Stat(path); os.IsNotExist(err) {
+
+	if force || os.IsNotExist(checkFile(path)) {
 		err := downloadYtDlp(path)
 		if err != nil {
 			panic("failed to download yt-dlp: " + err.Error())
 		}
 	}
+
 	return path
 }
 
-func InstallDependencies() {
-	ensureYtDlp()
+func checkFile(path string) error {
+	_, err := os.Stat(path)
+	return err
+}
+
+func InstallDependencies(force bool) {
+	ensureYtDlp(force)
 }
