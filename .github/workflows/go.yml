@@ -100,7 +100,7 @@ jobs:
       - name: Test Moesic
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
-            moesic.exe || true
+            moesic || true
           else
             moesic || true
           fi

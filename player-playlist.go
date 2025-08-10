@@ -124,7 +124,7 @@ func (m playlistModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case progressTickMsg:
 		// * song completed
-		if globalCurrentTime >= globalCurrentDuration{
+		if globalCurrentTime >= globalCurrentDuration {
 			m.currentPlayer.Process.Kill()
 			m.playlistIndex++
 			if m.playlistIndex >= len(m.playlists) {
@@ -149,7 +149,7 @@ func (m playlistModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		// * prepare next song
-		if globalCurrentTime > 5 && !m.loadingNext {
+		if !m.loadingNext {
 			m.loadingNext = true
 			nextSong := m.playlists[m.playlistIndex+1]
 			if nextSong.audioUrl == nil {

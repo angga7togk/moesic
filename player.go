@@ -176,7 +176,7 @@ func (m playerModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		// * prepare next song
-		if m.next == nil && globalCurrentTime > 10 && !m.loadingNext && !m.options.isPlayOne {
+		if m.next == nil && !m.loadingNext && !m.options.isPlayOne {
 			m.loadingNext = true
 			return m, tea.Batch(tickProgress(), fetchNextAsync())
 		}

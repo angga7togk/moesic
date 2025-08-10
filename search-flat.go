@@ -6,6 +6,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type searchFlatModel struct {
@@ -66,5 +67,9 @@ func initSearchFlatModel() searchFlatModel {
 	d := list.NewDefaultDelegate()
 	m := searchFlatModel{list: list.New(items, d, 0, 0)}
 	m.list.Title = "What moesic would you like to play?"
+	m.list.Styles.Title = lipgloss.NewStyle().
+		Background(lipgloss.NoColor{}).
+		Bold(true).
+		Foreground(lipgloss.Color("#FF69B4"))
 	return m
 }

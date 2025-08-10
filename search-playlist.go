@@ -17,7 +17,7 @@ type item struct {
 
 func (i item) Title() string       { return i.title }
 func (i item) Description() string { return i.desc }
-func (i item) FilterValue() string { return i.title }
+func (i item) FilterValue() string { return i.title + " " + i.desc }
 
 type searchModel struct {
 	list list.Model
@@ -74,5 +74,9 @@ func initSearchModel() searchModel {
 	d.ShowDescription = false
 	m := searchModel{list: list.New(items, d, 0, 0)}
 	m.list.Title = "What playlist would you like to play?"
+	m.list.Styles.Title = lipgloss.NewStyle().
+		Background(lipgloss.NoColor{}).
+		Bold(true).
+		Foreground(lipgloss.Color("#FF69B4"))
 	return m
 }
