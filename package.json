@@ -1,6 +1,7 @@
 {
   "name": "moesic",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "type": "module",
   "description": "Moesic is a freely accessible and open collection of Japanese music and anime. The project is open source, with the goal of providing a simple, aesthetically pleasing music listening experience focused on Japanese and anime content.",
   "main": "index.js",
   "scripts": {
